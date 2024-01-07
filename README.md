@@ -12,23 +12,16 @@ pip3 install -r requirements.txt
 
 ## Usage
 
-0) [Register a dummy Spotify OAuth application](https://developer.spotify.com/dashboard) and **add `https://open.spotify.com` as a callback URI** in its settings.
-
 1) Obtain a Yandex.Music OAuth token.[^1]
 
-2) Run the script using Client ID and Client Secret copied from your app's Spotify dashboard:
+2) If you don't want to import some items (likes, playlists, albums, artists) you can exclude them by specifying the `-i/--ignore` argument, for example:
 ```bash
-python3 importer.py --id <spotify_client_id> --secret <spotify_client_secret> -u <spotify_username> -t <yandex_token>
+python3 exporter.py --id <spotify_client_id> --secret <spotify_client_secret> -u <spotify_username> -t <yandex_token> -i playlists albums artists
 ```
 
-3) If you don't want to import some items (likes, playlists, albums, artists) you can exclude them by specifying the `-i/--ignore` argument, for example:
-```bash
-python3 importer.py --id <spotify_client_id> --secret <spotify_client_secret> -u <spotify_username> -t <yandex_token> -i playlists albums artists
-```
+1) After launch, script will store all information inside out directory
 
-4) After launch, script will open the web browser with authorization dialog. After finishing authorization, you need to copy resulting URL, close browser tab and paste that URL after `Enter the URL you were redirected to:`
-
-5) If authorization succeed - you will see log of import process.
+2) If authorization succeed - you will see log of import process.
 
 JSON import is also available. Use `--json-path` or `-j` to specify path to JSON file in format described below.
 ```
