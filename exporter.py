@@ -68,12 +68,13 @@ class Exporter:
 
     def export_likes(self, out_path: str):
         self.not_exported['Likes'] = []
+        likes_tracks_response = self.yandex_client.users_likes_tracks()
+        if likes_tracks_response is not None:
+            likes_tracks = likes_tracks_response.tracks
+            tracks = self.yandex_client.tracks([f'{track.id}:{track.album_id}' for track in likes_tracks if track.album_id])
+            logger.info('Importing liked tracks...')
 
-        likes_tracks = self.yandex_client.users_likes_tracks().tracks
-        tracks = self.yandex_client.tracks([f'{track.id}:{track.album_id}' for track in likes_tracks if track.album_id])
-        logger.info('Importing liked tracks...')
-
-        self._save_json([self._track_to_dict(t) for t in tracks], f'{out_path}/likes.json')
+            self._save_json([self._track_to_dict(t) for t in tracks], f'{out_path}/likes.json')
 
     def export_playlists(self, out_path: str):
         playlists = self.yandex_client.users_playlists_list()
@@ -145,6 +146,10 @@ if __name__ == '__main__':
         if arguments.token:
             yandex_client_ = Client(arguments.token)
             yandex_client_.init()
+
+        if yandex_client_ is None:
+            logger.error('Yandex Music token is required')
+            exit(1)
 
         exporter = Exporter(yandex_client_, arguments.ignore)
 
