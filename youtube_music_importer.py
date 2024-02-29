@@ -34,7 +34,7 @@ class YoutubeMusicImporter:
         for track in trackList:
             search_results = self.yt.search(f'{str.join(' & ', track.artists)} {track.track}')
             for result in search_results:
-                if result['type'] == 'song':
+                if result['resultType'] == 'song':
                     track_ids.append(result['videoId'])
                     break
             break
@@ -46,7 +46,7 @@ class YoutubeMusicImporter:
             item(in_path)
 
     def _dict_to_track(self, track_dict):
-        return Track(track_dict['id'], track_dict['title'], track_dict['artists'], track_dict['duration_ms'])
+        return Track(track_dict['id'], track_dict['track'], track_dict['artists'], track_dict['duration_ms'])
     
     def _dict_to_album(self, album_dict):
         return Album(album_dict['id'], album_dict['title'], album_dict['artists'], album_dict['year'])
@@ -55,9 +55,9 @@ class YoutubeMusicImporter:
         return Artist(artist_dict['id'], artist_dict['name'])
 
 class Track:
-    def __init__(self, id, title, artists, duration_ms):
+    def __init__(self, id, track, artists, duration_ms):
         self.id = id
-        self.title = title
+        self.track = track
         self.artists = artists
         self.duration_ms = duration_ms
 
