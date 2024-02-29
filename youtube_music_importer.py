@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 from ytmusicapi import YTMusic
 
 class YoutubeMusicImporter:
@@ -13,15 +14,26 @@ class YoutubeMusicImporter:
             del self._importing_items[item]
 
     def import_likes(self, in_path: str):
-        pl_name = 'likes imported with YM importer'
-        playlistId = self.yt.create_playlist(pl_name, 'This playlist was imported using youtube music importer')
-        print(f'Created playlist {pl_name} with id {playlistId}')
+        self._import_from_file(f'{in_path}/likes.json', 'YM Importer: likes')
+
+    def import_playlists(self, in_path: str):
+        #get all playlists from playlist folder and import them
+        for playlist in os.listdir(f'{in_path}/playlists'):
+            if playlist.endswith('.json'):
+                self._import_from_file(f'{in_path}/playlists/{playlist}', f'YM Importer: {playlist[:-5]}') #cut .json from playlist name
+
+    
+    def _import_from_file(self, filename, playlist_name):
+        playlistId = self.yt.create_playlist(playlist_name, 'This playlist was imported using youtube music importer')
+        print(f'Created playlist {playlist_name} with id {playlistId}')
         tracks = []
-        with open(f'{in_path}/likes.json', 'r') as f:
-            likes = json.load(f)
-            for track in likes:
+        with open(filename, 'r') as f:
+            tracks_file = json.load(f)
+            for track in tracks_file:
                 tracks.append(self._dict_to_track(track))
         
+        print('here')
+
         total_tracks = len(tracks)
         print(f'Importing {total_tracks} liked tracks')
         batchSize = 10
@@ -29,13 +41,9 @@ class YoutubeMusicImporter:
             batch = tracks[i:i+batchSize]
             batchIds = self.search_song_ids_for(batch)
             self.yt.add_playlist_items(playlistId, batchIds)
-            print('Progress ', i + len(batchIds), f' of {total_tracks} tracks to playlist')
-                
+            print('Progress ', i + len(batchIds), f' of {total_tracks} tracks to playlist - {playlist_name}')
+        print(f'Finished importing {total_tracks} liked tracks to playlist {playlist_name}')
 
-    def import_playlists(self, in_path: str):
-        # Add your implementation here
-        pass
-    
     def search_song_ids_for(self, trackList):
         track_ids = []
         for track in trackList:
