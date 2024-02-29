@@ -129,7 +129,7 @@ class Exporter:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Creates a playlist for user')
+    parser = argparse.ArgumentParser(description='Export music data from Yandex Music account to JSON files')
 
     parser.add_argument('-t', '--token', help='Token from music.yandex.com account')
 
