@@ -13,17 +13,24 @@ class YoutubeMusicImporter:
             del self._importing_items[item]
 
     def import_likes(self, in_path: str):
-        # playlistId = self.yt.create_playlist('likes with YM importer', 'This playlist was imported using youtube music importer')
+        pl_name = 'likes imported with YM importer'
+        playlistId = self.yt.create_playlist(pl_name, 'This playlist was imported using youtube music importer')
+        print(f'Created playlist {pl_name} with id {playlistId}')
         tracks = []
         with open(f'{in_path}/likes.json', 'r') as f:
             likes = json.load(f)
             for track in likes:
                 tracks.append(self._dict_to_track(track))
         
-        trackIds = self.search_song_ids_for(tracks)
-        # self.yt.add_playlist_items(playlistId, [trackId])
-        # Add your implementation here
-        pass
+        total_tracks = len(tracks)
+        print(f'Importing {total_tracks} liked tracks')
+        batchSize = 10
+        for i in range(0, len(tracks), batchSize):
+            batch = tracks[i:i+batchSize]
+            batchIds = self.search_song_ids_for(batch)
+            self.yt.add_playlist_items(playlistId, batchIds)
+            print('Progress ', i + len(batchIds), f' of {total_tracks} tracks to playlist')
+                
 
     def import_playlists(self, in_path: str):
         # Add your implementation here
@@ -37,8 +44,6 @@ class YoutubeMusicImporter:
                 if result['resultType'] == 'song':
                     track_ids.append(result['videoId'])
                     break
-            break
-        print(track_ids)
         return track_ids
     
     def import_all(self, in_path: str):
