@@ -136,3 +136,4 @@ cython_debug/
 
 # Work folder
 out
+.DS_Store
