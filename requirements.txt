@@ -1,1 +1,2 @@
 yandex-music>=2.0.0
+ytmusicapi==1.5.3
