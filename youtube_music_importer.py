@@ -35,7 +35,7 @@ class YoutubeMusicImporter:
         print('here')
 
         total_tracks = len(tracks)
-        print(f'Importing {total_tracks} liked tracks')
+        print(f'Importing {total_tracks} tracks')
         batchSize = 10
         for i in range(0, len(tracks), batchSize):
             batch = tracks[i:i+batchSize]
