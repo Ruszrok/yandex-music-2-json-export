@@ -3,6 +3,17 @@ import json
 import os
 from ytmusicapi import YTMusic
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 class YoutubeMusicImporter:
     def __init__(self, yt_client, ignore_list):
         self.yt = yt_client
@@ -48,10 +59,14 @@ class YoutubeMusicImporter:
         track_ids = []
         for track in trackList:
             search_results = self.yt.search(f'{str.join(' & ', track.artists)} {track.track}')
+            found = False
             for result in search_results:
                 if result['resultType'] == 'song':
                     track_ids.append(result['videoId'])
+                    found = True
                     break
+            if not found:
+                print(bcolors.FAIL + f'Could not find song {track.track} by {str.join(', ', track.artists)}' + bcolors.ENDC)
         return track_ids
     
     def import_all(self, in_path: str):
