@@ -47,5 +47,15 @@ JSON import is also available. Use `--json-path` or `-j` to specify path to JSON
 python3 youtube_music_importer.py  -t <path to oauth.json> -i playlists -if <path to exported data>
 ```
 3) To ensure proper functionality, you must save the exported file structure. All json files inside playlist folder will be considered as playlist for import
+```
+├── playlists
+│   ├── pl1.json
+│   ├── pl2.json
+│   ├── pl3.json
+│   └── pl_last.json
+├── albums.json
+├── artists.json
+└── likes.json
+```
 
 [^1]: Since it's impossible to register an OAuth application with Yandex.Music access scope, you have to [reuse the token from music.yandex.ru itself](https://github.com/MarshalX/yandex-music-api/discussions/513).
