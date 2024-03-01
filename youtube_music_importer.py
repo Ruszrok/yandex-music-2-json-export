@@ -2,25 +2,14 @@ import argparse
 import json
 import os
 from ytmusicapi import YTMusic
-import logging
-
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+import logging, coloredlogs
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
+coloredlogs.install(level='INFO', logger=logger, fmt='%(asctime)s - %(levelname)s - %(message)s')
 class YoutubeMusicImporter:
     def __init__(self, yt_client, ignore_list):
         self.yt = yt_client
@@ -51,13 +40,13 @@ class YoutubeMusicImporter:
                 tracks.append(self._dict_to_track(track))
 
         total_tracks = len(tracks)
-        logger.info(f'Importing {total_tracks} tracks')
-        batchSize = 10
+        logger.info(f'Importing {total_tracks} tracks to playlist {playlist_name}')
+        batchSize = 10 #It was set to 10 experimentally, it can be changed
         for i in range(0, len(tracks), batchSize):
             batch = tracks[i:i+batchSize]
             batchIds = self.search_song_ids_for(batch)
             self.yt.add_playlist_items(playlistId, batchIds)
-            logger.info('Progress ', i + len(batchIds), f' of {total_tracks} tracks to playlist - {playlist_name}')
+            logger.info(f'Progress {i + len(batchIds)} of {total_tracks} tracks to playlist - {playlist_name}')
         logger.info(f'Finished importing {total_tracks} liked tracks to playlist {playlist_name}')
 
     def search_song_ids_for(self, trackList):
@@ -71,7 +60,7 @@ class YoutubeMusicImporter:
                     found = True
                     break
             if not found:
-                logger.error(bcolors.FAIL + f'Could not find song {track.track} by {str.join(', ', track.artists)}' + bcolors.ENDC)
+                logger.error(f'Could not find song {track.track} by {str.join(', ', track.artists)}')
         return track_ids
     
     def import_all(self, in_path: str):
